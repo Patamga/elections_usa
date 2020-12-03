@@ -22,7 +22,6 @@ const config = {
     './main.js'
   ],
   resolve: {
-
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
       './setPrototypeOf': './setPrototypeOf.js',
@@ -56,7 +55,7 @@ const config = {
     },
     proxy: [
       {
-        context: ['/api', '/auth', '/socket.io'],
+        context: ['/api', '/auth', '/ws'],
         target: 'http://0.0.0.0:8090',
         secure: false,
         changeOrigin: true,

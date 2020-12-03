@@ -5,10 +5,12 @@ import bodyParser from 'body-parser'
 import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
-
+import axios from 'axios'
 import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
+
+const { readFile } = require('fs').promises
 
 const { default: Root } = require('../dist/assets/js/ssr/root.bundle')
 
@@ -24,8 +26,27 @@ const middleware = [
   bodyParser.json({ limit: '50mb', extended: true }),
   cookieParser()
 ]
-
 middleware.forEach((it) => server.use(it))
+
+const workDir = `${process.cwd()}/client/assets/static`
+const fileRead = async () => {
+  return readFile(`${workDir}/countypres_2000.tab`, {
+    encoding: 'utf8'
+  }).then((data) => data)
+}
+const mapsD3 = 'https://d3js.org/us-10m.v1.json'
+server.get('/api/v1/maps', (req, res) => {
+  axios(mapsD3).then(({ data }) => {
+    res.json(data)
+  })
+})
+server.get('/api/v1/vote', async (req, res) => {
+  const vote = await fileRead()
+  res.send(vote)
+})
+
+
+
 
 server.use('/api/', (req, res) => {
   res.status(404)
