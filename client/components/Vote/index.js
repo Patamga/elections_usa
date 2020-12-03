@@ -4,7 +4,8 @@ import { select } from 'd3'
 import { geoPath } from 'd3-geo'
 import * as d3 from 'd3'
 import { setUsTopo } from '../../redux/reducers/votesMap'
-
+import TimeLine from './timeline'
+import Percent from './percent'
 
 const DEFAULT_WIDTH = 960
 const DEFAULT_HEIGHT = 600
@@ -72,6 +73,15 @@ const Vote = () => {
     <div className="w-full h-full flex flex-col bg-gray-100">
       <div className="min-w-screen min-h-screen bg-gray-900 flex flex-wrap content-around justify-center px-5 py-5">
         <div className="bg-gray-100 text-white rounded shadow-xl py-5 px-5 w-full lg:w-10/12 xl:w-3/4">
+          <TimeLine presidents={presidents} year={year} votesPerYear={votesPerYear} />
+          <div className="flex my-0">
+            <div className="w-full h-2 ">{' '}</div>
+            <div className="w-1 h-2 bg-gray-600 ">{' '}</div>
+            <div className="w-full h-2">{' '}</div>
+          </div>
+          {votesPerYear.type !== '' && (
+            <Percent presidents={presidents} year={year} votesPerYear={votesPerYear} />
+          )}
           <div className="flex flex-col items-end">
             <svg width={width} height={height} viewBox="0 0 975 610" id="chart" />
           </div>

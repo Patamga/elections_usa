@@ -22,6 +22,7 @@ const config = {
     './main.js'
   ],
   resolve: {
+
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
       './setPrototypeOf': './setPrototypeOf.js',

@@ -1,13 +1,16 @@
 import * as d3 from 'd3'
 import * as topojson from 'topojson-client'
 import dataVotesByYears from '../actions/votesByYear'
+import votesPerYear from '../actions/pecentPerYear'
 import votesInMaps from '../actions/votesInMaps'
+
 
 const SET_US = 'SET_US'
 const SET_VOTES = 'SET_VOTES'
+const SET_PRESIDENT = 'SET_PRESIDENT'
 const SET_YEAR = 'SET_YEAR'
 const SET_VOTE_BY_STATE = 'SET_VOTE_BY_STATE'
-const SET_PRESIDENT = 'SET_PRESIDENT'
+const VOTES_PER_YEAR = 'VOTES_PER_YEAR'
 
 const presidentData = {
   2000: { dem: 'Al Gore', repub: 'George W. Bush' },
@@ -22,7 +25,8 @@ const initialState = {
   votes: [],
   year: '2016',
   presidents: { dem: 'Hillary Clinton', repub: 'Donald Trump' },
-  votesByState: { type: '' }
+  votesByState: { type: '' },
+  votesPerYear: { type: '' }
 }
 
 export default (state = initialState, action) => {
@@ -32,20 +36,25 @@ export default (state = initialState, action) => {
         ...state,
         us: action.us
       }
+    case VOTES_PER_YEAR:
+      return {
+        ...state,
+        votesPerYear: action.votesPerYear
+      }
     case SET_VOTES:
       return {
         ...state,
         votes: action.votes
       }
-    case SET_PRESIDENT:
-      return {
-        ...state,
-        presidents: action.presidents
-      }
     case SET_VOTE_BY_STATE:
       return {
         ...state,
         votesByState: action.votesByState
+      }
+    case SET_PRESIDENT:
+      return {
+        ...state,
+        presidents: action.presidents
       }
     case SET_YEAR:
       return {
@@ -54,6 +63,14 @@ export default (state = initialState, action) => {
       }
     default:
       return state
+  }
+}
+export function setVotesPerYear() {
+  return (dispatch, getState) => {
+    const { votes } = getState().votesMap
+    const votesData = votesPerYear(votes)
+    dispatch({ type: VOTES_PER_YEAR, votesPerYear: votesData })
+    return votesData
   }
 }
 
@@ -65,36 +82,40 @@ export function setVotes() {
       .then((data) => {
         dispatch({ type: SET_VOTES, votes: data })
         return data
+      }).then((data) =>{
+        dispatch(setVotesPerYear())
+        return data
       })
       .then((data) => {
         return votesInMaps(data)
-      }).then((vote) => {
+      })
+      .then((vote) => {
         return vote
-        .map((forState) => {
-          const topo = us.find((top) => top.id === forState.id)
-          if (topo) {
-            return {
-              ...topo,
-              properties: {
-                year: forState.year,
-                titleName: `${forState.state} State`,
-                state: forState.state,
-                state_po: forState.state_po,
-                votes: {
-                  count: forState.count,
-                  percent: {
-                    dem: +((forState.count.democrat * 100) / forState.count.total).toFixed(2),
-                    repub: +((forState.count.republican * 100) / forState.count.total).toFixed(2),
-                    green: +((forState.count.green * 100) / forState.count.total).toFixed(2),
-                    NA: +((forState.count.NA * 100) / forState.count.total).toFixed(2)
+          .map((forState) => {
+            const topo = us.find((top) => top.id === forState.id)
+            if (topo) {
+              return {
+                ...topo,
+                properties: {
+                  year: forState.year,
+                  titleName: `${forState.state} State`,
+                  state: forState.state,
+                  state_po: forState.state_po,
+                  votes: {
+                    count: forState.count,
+                    percent: {
+                      dem: +((forState.count.democrat * 100) / forState.count.total).toFixed(2),
+                      repub: +((forState.count.republican * 100) / forState.count.total).toFixed(2),
+                      green: +((forState.count.green * 100) / forState.count.total).toFixed(2),
+                      NA: +((forState.count.NA * 100) / forState.count.total).toFixed(2)
+                    }
                   }
                 }
               }
             }
-          }
-          return forState
-        })
-        .filter((it) => it.id !== '00')
+            return forState
+          })
+          .filter((it) => it.id !== '00')
       })
       .then((votesTopo) => {
         const votesByStateByYear = dataVotesByYears(votesTopo)
@@ -112,6 +133,7 @@ export function setPresidents() {
 export function setYear(year) {
   return (dispatch) => {
     dispatch({ type: SET_YEAR, year })
+    dispatch(setPresidents())
   }
 }
 export function setUsTopo() {

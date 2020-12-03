@@ -38,7 +38,6 @@ const config = {
   },
   externals: [nodeExternals()],
   resolve: {
-
     alias: {
       d3: 'd3/index.js',
       './setPrototypeOf': './setPrototypeOf.js',
@@ -102,7 +101,8 @@ const config = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: '../'
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development'
             }
           },
 
