@@ -1,18 +1,28 @@
 import * as d3 from 'd3'
 import * as topojson from 'topojson-client'
-import dataVotesByYears from '../../actions/votesByYear'
-import votesInMaps from '../../actions/votesInMaps'
+import dataVotesByYears from '../actions/votesByYear'
+import votesInMaps from '../actions/votesInMaps'
 
 const SET_US = 'SET_US'
 const SET_VOTES = 'SET_VOTES'
 const SET_YEAR = 'SET_YEAR'
 const SET_VOTE_BY_STATE = 'SET_VOTE_BY_STATE'
+const SET_PRESIDENT = 'SET_PRESIDENT'
+
+const presidentData = {
+  2000: { dem: 'Al Gore', repub: 'George W. Bush' },
+  2004: { dem: 'John Kerry', repub: 'George W. Bush' },
+  2008: { dem: 'Barack Obama', repub: 'John McCain' },
+  2012: { dem: 'Barack Obama', repub: 'Mitt Romney' },
+  2016: { dem: 'Hillary Clinton', repub: 'Donald Trump' }
+}
 
 const initialState = {
   us: { type: '' },
   votes: [],
   year: '2016',
-  votesByState: { type: '' },
+  presidents: { dem: 'Hillary Clinton', repub: 'Donald Trump' },
+  votesByState: { type: '' }
 }
 
 export default (state = initialState, action) => {
@@ -26,6 +36,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         votes: action.votes
+      }
+    case SET_PRESIDENT:
+      return {
+        ...state,
+        presidents: action.presidents
       }
     case SET_VOTE_BY_STATE:
       return {
@@ -49,7 +64,6 @@ export function setVotes() {
       .tsv('/api/v1/vote')
       .then((data) => {
         dispatch({ type: SET_VOTES, votes: data })
-        dispatch(setVotesPerYear())
         return data
       })
       .then((data) => {
@@ -88,10 +102,16 @@ export function setVotes() {
       })
   }
 }
+export function setPresidents() {
+  return (dispatch, getState) => {
+    const { year } = getState().votesMap
+    const presidents = presidentData[year]
+    dispatch({ type: SET_PRESIDENT, presidents })
+  }
+}
 export function setYear(year) {
   return (dispatch) => {
     dispatch({ type: SET_YEAR, year })
-    dispatch(setPresidents())
   }
 }
 export function setUsTopo() {
