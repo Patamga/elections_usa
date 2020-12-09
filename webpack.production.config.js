@@ -9,7 +9,6 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const StringReplacePlugin = require('string-replace-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserJSPlugin = require('terser-webpack-plugin')
-// const SentryWebpackPlugin = require('@sentry/webpack-plugin')
 
 const { v4: uuidv4 } = require('uuid')
 
@@ -37,8 +36,6 @@ const config = {
     main: './main.js'
   },
   resolve: {
-
-
     alias: {
       d3: 'd3/index.js',
       './setPrototypeOf': './setPrototypeOf.js',
@@ -48,10 +45,11 @@ const config = {
     }
   },
   output: {
-    filename: 'js/[name].bundle.js',
+    filename: 'js/[name].bundle.jsindex.js',
     path: resolve(__dirname, 'dist/assets'),
-    publicPath: '/',
-    chunkFilename: 'js/[name].js?id=[chunkhash]'
+    publicPath: '',
+    chunkFilename: 'js/[name].js?id=[chunkhash]',
+    libraryTarget: 'commonjs'
   },
   mode: 'production',
   context: resolve(__dirname, 'client'),
@@ -174,7 +172,6 @@ const config = {
     new CopyWebpackPlugin(
       {
         patterns: [
-
           { from: 'assets/images', to: 'images' },
           { from: 'assets/fonts', to: 'fonts' },
           { from: 'assets/manifest.json', to: 'manifest.json' },

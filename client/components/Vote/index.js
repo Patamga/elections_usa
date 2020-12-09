@@ -64,7 +64,7 @@ const Vote = () => {
     dispatch(setUsTopo())
   }, [])
   useEffect(() => {
-    if (us.type !== '' && votesByState.type !== '') {
+    if (us.lenght !== 0 && typeof votesByState[year] !== 'undefined') {
       draw(us, votesByState, presidents, year)
     }
   }, [year, votesByState, votesPerYear])
@@ -75,9 +75,9 @@ const Vote = () => {
         <div className="bg-gray-100 text-white rounded shadow-xl py-5 px-5 w-full lg:w-10/12 xl:w-3/4">
           <TimeLine presidents={presidents} year={year} votesPerYear={votesPerYear} />
           <div className="flex my-0">
-            <div className="w-full h-2 ">{' '}</div>
-            <div className="w-1 h-2 bg-gray-600 ">{' '}</div>
-            <div className="w-full h-2">{' '}</div>
+            <div className="w-full h-2 ">&bsp;</div>
+            <div className="w-1 h-2 bg-gray-600 ">&bsp;</div>
+            <div className="w-full h-2">&bsp;</div>
           </div>
           {votesPerYear.type !== '' && (
             <Percent presidents={presidents} year={year} votesPerYear={votesPerYear} />

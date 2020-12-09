@@ -4,7 +4,6 @@ import dataVotesByYears from '../actions/votesByYear'
 import votesPerYear from '../actions/pecentPerYear'
 import votesInMaps from '../actions/votesInMaps'
 
-
 const SET_US = 'SET_US'
 const SET_VOTES = 'SET_VOTES'
 const SET_PRESIDENT = 'SET_PRESIDENT'
@@ -21,11 +20,11 @@ const presidentData = {
 }
 
 const initialState = {
-  us: { type: '' },
+  us: [],
   votes: [],
   year: '2016',
   presidents: { dem: 'Hillary Clinton', repub: 'Donald Trump' },
-  votesByState: { type: '' },
+  votesByState: {},
   votesPerYear: { type: '' }
 }
 
@@ -82,7 +81,8 @@ export function setVotes() {
       .then((data) => {
         dispatch({ type: SET_VOTES, votes: data })
         return data
-      }).then((data) =>{
+      })
+      .then((data) => {
         dispatch(setVotesPerYear())
         return data
       })
